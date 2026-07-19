@@ -6,6 +6,7 @@ import LogsViewer from './pages/LogsViewer'
 import Settings from './pages/Settings'
 import AttackSimulation from './pages/AttackSimulation'
 import Benchmarks from './pages/Benchmarks'
+import LoadTestResults from './pages/LoadTestResults'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/settings" element={<Settings />} />
             <Route path="/attack" element={<AttackSimulation />} />
             <Route path="/benchmarks" element={<Benchmarks />} />
+            <Route path="/load-test" element={<LoadTestResults />} />
           </Routes>
         </main>
       </div>

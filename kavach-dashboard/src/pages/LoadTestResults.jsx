@@ -6,6 +6,7 @@ import kavachApi from "../api/kavachApi";
 export default function LoadTestResults() {
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -14,6 +15,7 @@ export default function LoadTestResults() {
         setResults(res.data);
       } catch (err) {
         console.error("Failed to fetch load test results", err);
+        setError("Could not load load-test results. Is the gateway running on :8000?");
       } finally {
         setLoading(false);
       }
@@ -27,6 +29,17 @@ export default function LoadTestResults() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-4"></div>
           <p>Loading load test results...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !results) {
+    return (
+      <div className="min-h-screen bg-slate-900 text-slate-100 p-4 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <AlertTriangle className="w-10 h-10 text-rose-500 mx-auto mb-4" />
+          <p className="text-rose-400">{error || "No load-test data available."}</p>
         </div>
       </div>
     );

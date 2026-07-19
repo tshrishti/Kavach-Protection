@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom'
-import { Shield, Activity, BarChart3, FileText, Settings, Skull, Zap } from 'lucide-react'
+import { Shield, Activity, BarChart3, FileText, Settings, Skull, Zap, Gauge } from 'lucide-react'
 
 const navItems = [
   { path: '/', icon: Shield, label: 'Dashboard' },
   { path: '/traffic', icon: Activity, label: 'Live Traffic' },
   { path: '/benchmarks', icon: BarChart3, label: 'Benchmarks' },
+  { path: '/load-test', icon: Gauge, label: 'Load Test' },
   { path: '/attack', icon: Skull, label: 'Attack Status' },
   { path: '/logs', icon: FileText, label: 'Logs' },
   { path: '/settings', icon: Settings, label: 'Settings' },
