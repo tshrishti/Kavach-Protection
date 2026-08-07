@@ -156,6 +156,25 @@ async def update_settings(settings: dict):
     settings_config.update(settings)
     return {"status": "updated", "settings": settings_config}
 
+@app.get("/api/media-crypto")
+async def get_media_crypto_info():
+    """Describe Kavach's hybrid file-encryption capability (text/image/video).
+
+    The actual encryption lives in pqc_media_crypto.py / encrypt_media.py.
+    This endpoint lets the dashboard show that images and video — not just
+    text — are protected with the same quantum-safe scheme.
+    """
+    return {
+        "scheme": "hybrid-pqc",
+        "key_exchange": "ML-KEM-768 (NIST FIPS 203)",
+        "data_cipher": "AES-256-GCM",
+        "key_derivation": "HKDF-SHA256",
+        "supported_media": ["text", "image", "video", "any-binary"],
+        "authenticated": True,
+        "overhead_bytes": 1124,
+        "cli": "python3 encrypt_media.py {keygen|encrypt|decrypt}"
+    }
+
 @app.get("/api/load-test-results")
 async def get_load_test_results():
     return {
@@ -243,6 +262,7 @@ async def startup_event():
     print("  - GET  /api/traffic/timeline")
     print("  - GET  /api/settings")
     print("  - POST /api/settings")
+    print("  - GET  /api/media-crypto")
 
 # ========== MAIN ==========
 if __name__ == "__main__":

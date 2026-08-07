@@ -1,10 +1,15 @@
-key.pem
-cert.pem
+# Python
 __pycache__/
+*.pyc
+.venv/
+venv/
 
 # Kavach media-encryption artifacts (never commit keys or ciphertext)
 *.key
 *.pub
 *.kvch
 keys/
-.venv/
+
+# TLS / dev keys
+key.pem
+cert.pem

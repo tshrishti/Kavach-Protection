@@ -1,0 +1,17 @@
+# Kavach backend dependencies
+#   pip install -r requirements.txt
+
+# Web gateway / mock APIs
+fastapi
+uvicorn
+httpx
+
+# Post-quantum cryptography (NIST FIPS 203 / 204)
+kyber-py==1.2.0
+dilithium-py
+
+# Hybrid symmetric encryption for text/image/video (AES-256-GCM, HKDF)
+cryptography==50.0.0
+
+# Test image generation for the media-encryption test
+pillow==11.3.0

@@ -268,3 +268,64 @@ Or use the interactive API docs at **http://127.0.0.1:8000/docs**.
 *This document explains the current state of the Kavach project and the work done to
 review and polish it. It is a plain-language guide for understanding and presenting
 the project. (A shorter `PROJECT_OVERVIEW.md` also exists in this repo.)*
+
+---
+
+## 11. Media encryption — text, images AND video (new)
+
+Earlier, the PQC demos only touched **text**. Kavach now encrypts **any file** —
+text, images, and video — using the exact scheme real post-quantum systems use,
+called **KEM + DEM** (a key exchange plus a data cipher):
+
+1. **ML-KEM-768** (Kyber, NIST **FIPS 203**) does the quantum-safe **key exchange**.
+2. **HKDF-SHA256** turns that shared secret into a clean **256-bit AES key**.
+3. **AES-256-GCM** encrypts the actual file bytes — and *authenticates* them, so any
+   tampering is detected on decryption.
+
+Because a photo or a video is just bytes, the **same code protects all media**. Only
+the holder of the ML-KEM **secret key** can decrypt.
+
+### Files
+| File | What it does |
+|---|---|
+| `pqc_media_crypto.py` | Core library: `encrypt_bytes` / `decrypt_bytes` / `encrypt_file` / `decrypt_file` |
+| `encrypt_media.py` | Command-line tool: `keygen`, `encrypt`, `decrypt` |
+| `test_media_crypto.py` | Proves text/image/video round-trip byte-for-byte and that wrong keys / tampering are rejected |
+
+### How to use it
+```bash
+cd kavach-backend
+pip install -r requirements.txt
+
+# 1. Make a recipient keypair once
+python3 encrypt_media.py keygen --out keys/kavach
+
+# 2. Encrypt an image or a video with the PUBLIC key
+python3 encrypt_media.py encrypt --pub keys/kavach.pub --in photo.png  --out photo.png.kvch
+python3 encrypt_media.py encrypt --pub keys/kavach.pub --in clip.mp4   --out clip.mp4.kvch
+
+# 3. Decrypt with the SECRET key
+python3 encrypt_media.py decrypt --sec keys/kavach.key --in photo.png.kvch --out photo_out.png
+python3 encrypt_media.py decrypt --sec keys/kavach.key --in clip.mp4.kvch  --out clip_out.mp4
+```
+
+Run the tests any time to confirm correctness:
+```bash
+python3 test_media_crypto.py
+```
+
+### Container format (`.kvch`)
+```
+MAGIC("KVCH2") | VERSION | KEM_CT_LEN | ML-KEM ciphertext | AES-GCM nonce | AES-GCM ciphertext+tag
+```
+The overhead is a constant **~1.1 KB** regardless of file size (the ML-KEM
+ciphertext + nonce + auth tag), so encrypting a 1 GB video costs the same tiny
+header as a 1 KB text file.
+
+### Notes / security
+- Secret keys are written with `0600` permissions; `*.key`, `*.pub` and `*.kvch`
+  are git-ignored so keys and ciphertext are never committed.
+- A new gateway endpoint `GET /api/media-crypto` advertises this capability to the
+  dashboard.
+- This is genuine, working cryptography (verified against NIST KAT vectors via
+  `verify_vectors.py`), unlike the representational protection in the proxy path.
