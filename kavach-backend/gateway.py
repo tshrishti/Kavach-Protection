@@ -20,11 +20,17 @@ DEFAULT_ALLOWED_ORIGINS = (
     "http://localhost:4173,"
     "http://127.0.0.1:4173"
 )
+ALLOWED_ORIGINS_ENV = os.getenv("ALLOWED_ORIGINS", "")
 ALLOWED_ORIGINS = [
     origin.strip()
-    for origin in os.getenv("ALLOWED_ORIGINS", DEFAULT_ALLOWED_ORIGINS).split(",")
+    for origin in (ALLOWED_ORIGINS_ENV or DEFAULT_ALLOWED_ORIGINS).split(",")
     if origin.strip()
 ]
+
+# Debug logging
+print(f"BACKEND_URL: {BACKEND_URL}")
+print(f"ALLOWED_ORIGINS_ENV (raw): '{ALLOWED_ORIGINS_ENV}'")
+print(f"ALLOWED_ORIGINS (parsed): {ALLOWED_ORIGINS}")
 
 # ========== GLOBAL STATE ==========
 request_logs: List[Dict] = []
