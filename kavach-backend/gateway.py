@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -11,7 +12,19 @@ from collections import defaultdict
 from typing import Dict, List
 
 # ========== CONFIGURATION ==========
-BACKEND_URL = "http://127.0.0.1:9000"
+BACKEND_URL = os.getenv("BACKEND_URL", "http://127.0.0.1:9000")
+DEFAULT_ALLOWED_ORIGINS = (
+    "http://localhost:3000,"
+    "http://127.0.0.1:3000,"
+    "http://localhost:5173,"
+    "http://localhost:4173,"
+    "http://127.0.0.1:4173"
+)
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", DEFAULT_ALLOWED_ORIGINS).split(",")
+    if origin.strip()
+]
 
 # ========== GLOBAL STATE ==========
 request_logs: List[Dict] = []
@@ -61,7 +74,7 @@ app = FastAPI(title="Kavach PQC Security Gateway", version="2.0.0")
 # CORS for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5173"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

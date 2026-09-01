@@ -172,6 +172,6 @@ if __name__ == "__main__":
     print("\n" + "="*60)
     print("🚀 KAVACH BACKEND RUNNING")
     print("📊 Active Users Counter: ENABLED")
-    print("📍 http://127.0.0.1:9000")
+    print("📍 http://0.0.0.0:9000")
     print("="*60 + "\n")
-    uvicorn.run("mock_backend:app", host="127.0.0.1", port=9000, reload=False)
+    uvicorn.run("mock_backend:app", host="0.0.0.0", port=9000, reload=False)
